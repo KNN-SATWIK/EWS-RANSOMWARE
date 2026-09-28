@@ -1,83 +1,42 @@
-# NEON//RANSOMWARE EWS — Live Detector
+# Ransomware Early Warning System
 
-This version is a REAL Windows filesystem-behavior detector for a user-selected test directory.
+A ransomware early warning system developed as part of an advanced internship project.
 
-## What is real
+The system monitors filesystem activity and assigns a risk score based on suspicious file behavior. It provides a live dashboard to observe activity and identify possible ransomware-like behavior.
 
-The program uses `watchdog` to observe the selected folder recursively. It receives actual operating-system filesystem events:
+## My Contribution
 
-- file creation
-- file modification
-- file deletion
-- file rename/move
+My work focuses on the base detection system and the monitoring interface.
 
-The detector then applies heuristic weights and a time-decay window.
+- Implemented real-time filesystem monitoring using Python and Watchdog
+- Added heuristic risk scoring for suspicious file activity
+- Monitored file creation, modification, deletion, and renaming events
+- Added detection for suspicious ransomware-related file extensions
+- Implemented risk score decay over time
+- Added configurable risk thresholds for different alert levels
+- Built the real-time monitoring dashboard
+- Added live activity logs and risk visualization
+- Added controls for selecting the folder to monitor and starting/stopping monitoring
+- Added a safe test-data generator for testing the detection system
 
-It does NOT simulate these events.
+## Technologies
 
-## Detection logic
+- Python
+- Watchdog
+- Tkinter / ttkbootstrap
+- Matplotlib
 
-| Real event | Base score |
-|---|---:|
-| CREATED | +2 |
-| MODIFIED | +3 |
-| DELETED | +15 |
-| RENAMED | +25 |
-| Suspicious ransomware extension | +45 |
-| Rapid modification burst | +20 |
+## How It Works
 
-Suspicious extensions include examples such as `.locked`, `.encrypted`, `.enc`, `.wncry`, `.locky`, `.crypted`, etc.
+The system watches a selected directory and processes filesystem events as they occur.
 
-Default alert threshold: 150.
-Default decay window: 10 seconds.
+Different activities contribute different amounts to the risk score. For example, repeated file modifications, deletions, renaming, or suspicious extensions increase the score. The score gradually decreases when suspicious activity stops.
 
-The current score is the sum of active event scores still inside the decay window.
+When the score crosses a configured threshold, the dashboard displays a corresponding risk status.
 
-## Safe test workflow
+## Running the Project
 
-1. Run the application.
-2. Click `SELECT FOLDER`.
-3. Select a dedicated empty test folder.
-4. Click `CREATE TEST DATA`.
-5. Click `START LIVE MONITOR`.
-6. Copy/edit/rename/delete the sample files.
-7. Watch the real events appear in the event stream and graph.
+Install the required packages:
 
-For a stronger ransomware-like detection demonstration, rapidly rename several COPY files to a harmless extension such as `.locked`. The program detects the real rename operations and recognizes `.locked` as suspicious.
-
-DO NOT run ransomware samples and DO NOT test against your real Documents, Desktop, system directories, or backups.
-
-## Installation
-
-Open PowerShell in this folder:
-
-```powershell
+```bash
 python -m pip install -r requirements.txt
-python ransomware_ews_live.py
-```
-
-If `python` is not available, try:
-
-```powershell
-py -m pip install -r requirements.txt
-py ransomware_ews_live.py
-```
-
-## Project scope
-
-This implements:
-
-- Base behavioral detection
-- Real filesystem monitoring
-- Time-decay risk scoring
-- Real-time alerting
-- Enhancement 1: Proper neon cyberpunk tool GUI
-
-Intentionally NOT implemented:
-
-2. AI-Based Adaptive Detection
-3. Deception Environment / Honeypots
-4. Threat Feed Updates
-5. Blockchain Logging + User Awareness
-
-Those remain extension points for the other four group members.
